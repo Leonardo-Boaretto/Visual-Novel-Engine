@@ -1,0 +1,261 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,700&family=Noto+Sans:wght@400;700&display=swap');
+
+:root {
+    --cor-primaria: #4CAF50;
+    --cor-primaria-hover: #45a049;
+    --cor-texto: #f0f0f0;
+    --cor-fundo-dialogo: rgba(10, 10, 10, 0.9);
+    --fonte-titulo: 'Crimson Text', serif;
+    --fonte-corpo: 'Noto Sans', sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: var(--fonte-corpo);
+    background-color: #000;
+    color: var(--cor-texto);
+    overflow: hidden;
+}
+
+#container-jogo {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 1s ease-in-out;
+}
+
+/* --- Tela Inicial --- */
+#tela-inicial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7));
+}
+
+#titulo-campanha {
+    font-family: var(--fonte-titulo);
+    font-size: 5em;
+    font-weight: 700;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+#botao-iniciar, .botao-menu {
+    font-family: var(--fonte-titulo);
+    font-size: 1.5em;
+    padding: 15px 35px;
+    margin-top: 20px;
+    cursor: pointer;
+    border: 2px solid var(--cor-primaria);
+    background-color: transparent;
+    color: var(--cor-primaria);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+#botao-iniciar:hover, .botao-menu:hover {
+    background-color: var(--cor-primaria);
+    color: white;
+    box-shadow: 0 0 20px var(--cor-primaria);
+}
+
+/* --- Imagem do Personagem --- */
+/* NOVO: Estilos para o palco e os slots de personagem */
+#palco-personagens {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 95vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    pointer-events: none; /* Permite cliques "através" do container */
+}
+
+.slot-personagem {
+    width: 45%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.slot-personagem img {
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(5px 5px 15px rgba(0,0,0,0.7));
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    pointer-events: auto; /* Reativa os eventos de ponteiro para as imagens */
+    cursor: pointer;
+}
+
+.slot-personagem img.visivel {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* NOVO: Classe para o personagem que não está falando */
+.slot-personagem img.inativo {
+    opacity: 0.6;
+}
+
+
+/* --- Interface do Jogo --- */
+#caixa-dialogo {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    position: absolute;
+    bottom: 2%;
+    left: 5%;
+    right: 5%;
+    background: var(--cor-fundo-dialogo);
+    padding: 25px;
+    border-radius: 10px;
+    border-top: 4px solid var(--cor-primaria);
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    height: 230px;
+}
+
+#nome-personagem {
+    font-family: var(--fonte-titulo);
+    font-weight: 700;
+    font-style: italic;
+    font-size: 2em;
+    color: var(--cor-primaria);
+    margin-bottom: 15px;
+}
+
+#texto-dialogo {
+    flex-grow: 1;
+    font-size: 1.2em;
+    line-height: 1.6;
+}
+
+#container-escolhas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.botao-escolha {
+    background: transparent;
+    color: var(--cor-texto);
+    border: 1px solid #777;
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1em;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+.botao-escolha:hover {
+    background-color: var(--cor-primaria);
+    border-color: var(--cor-primaria);
+    transform: translateX(5px);
+}
+
+.botao-escolha:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* --- Controles Superiores e Modais --- */
+#controles-superiores {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    background-color: rgba(0,0,0,0.5);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#controles-superiores button {
+    background: none;
+    border: 1px solid var(--cor-texto);
+    color: var(--cor-texto);
+    padding: 8px 12px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#controles-superiores button:hover {
+    background-color: var(--cor-primaria);
+    border-color: var(--cor-primaria);
+}
+
+.modal {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    background: var(--cor-fundo-dialogo);
+    color: var(--cor-texto);
+    padding: 20px;
+    border-radius: 10px;
+    width: 250px;
+    display: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    border: 1px solid #444;
+}
+
+.modal h3 {
+    margin-top: 0;
+    color: var(--cor-primaria);
+    font-family: var(--fonte-titulo);
+}
+
+.modal ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.modal ul li {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+}
+
+#log-dialogo {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.entrada-log {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333;
+}
+
+
+
+.log-personagem {
+    font-weight: bold;
+    color: var(--cor-primaria);
+}
+
+.log-texto {
+    margin-left: 5px;
+}
+
+/* Classe que vai esconder a caixa de diálogo */
+#caixa-dialogo.escondido {
+    transform: translateY(150%); /* Move a caixa para baixo, para fora da tela */
+    opacity: 0;
+    pointer-events: none; /* Impede cliques em botões invisíveis */
+}

@@ -1,0 +1,94 @@
+{
+  "nomeCampanha": "A Guerra dos Patos",
+  "personagens": [
+    { "nome": "Narrador" },
+    { "nome": "Pato de Topete", "imagem": "https://www.serebii.net/pokemon/art/912.png" },
+    { "nome": "Pato de Óculos", "imagem": "https://i.pinimg.com/originals/76/17/33/761733cb0e649b2bfc60198c7fff3dc5.png" }
+  ],
+  "cenarios": [
+    { "nome": "Sala de Aula", "imagem": "https://th.bing.com/th/id/R.c8ab44e6163ac10d42bbbefaaf2ac867?rik=VT4GqUNp4uy3FA&pid=ImgRaw&r=0" },
+    { "nome": "Final Feliz", "imagem": "https://i.imgur.com/MsQ7W7Y.png" },
+    { "nome": "Final Triste", "imagem": "https://i.imgur.com/a4wW2TS.png" },
+    { "nome": "Corredor", "imagem": "https://i.imgur.com/j3oYgL7.jpeg" }
+  ],
+  "itens": [],
+  "pontosRelacionamento": {
+    "Pato de Topete": 0,
+    "Pato de Óculos": 0
+  },
+  "cenas": [
+    {
+      "id": 1,
+      "cenario": "Sala de Aula",
+      "musicaFundo": "musica_calma.mp3",
+      "personagem": "Pato de Topete",
+      "personagemSecundario": null,
+      "dialogo": "…e é por isso que eu tenho certeza que o protagonista me admira mais. Meu topete é impecável.",
+      "escolhas": [
+        { "texto": "Continuar...", "proximaCena": 2 }
+      ]
+    },
+    {
+      "id": 2,
+      "cenario": "Sala de Aula",
+      "musicaFundo": "musica_calma.mp3",
+      "personagem": "Pato de Óculos",
+      "personagemSecundario": "Pato de Topete",
+      "dialogo": "Quá! Que bobagem! É óbvio que ele me acha mais legal. Meus óculos são puro estilo. Protagonista, quem está certo aqui?",
+      "escolhas": [
+        { "texto": "O Pato de Topete está certo.", "proximaCena": 3, "ganhoRelacionamento": { "Pato de Topete": 1 } },
+        { "texto": "O Pato de Óculos está certo.", "proximaCena": 3, "ganhoRelacionamento": { "Pato de Óculos": 1 } },
+        { "texto": "Por favor, vamos mudar de assunto...", "proximaCena": 3 }
+      ]
+    },
+    {
+      "id": 3,
+      "cenario": "Sala de Aula",
+      "personagem": "Pato de Topete",
+      "personagemSecundario": "Pato de Óculos",
+      "dialogo": "Hmm... ok. Mas vamos para a próxima questão, e essa é crucial. Quem é mais maneiro?",
+      "escolhas": [
+        { "texto": "O Pato de Topete, com certeza.", "proximaCena": 5, "ganhoRelacionamento": { "Pato de Topete": 1 } },
+        { "texto": "O Pato de Óculos, sem dúvida.", "proximaCena": 5, "ganhoRelacionamento": { "Pato de Óculos": 1 } },
+        { "texto": "Gente, por favor...", "proximaCena": 4 }
+      ]
+    },
+    {
+      "id": 7,
+      "cenario": "Sala de Aula",
+      "musicaFundo": "musica_tensao.mp3",
+      "personagem": "Pato de Topete",
+      "personagemSecundario": "Pato de Óculos",
+      "dialogo": "Chega! Isso não vai nos levar a lugar nenhum. Protagonista, decida de uma vez por todas! Quem de nós é o melhor?",
+      "escolhas": [
+        { "texto": "Votar no Pato de Topete", "proximaCena": 8, "requisitoRelacionamento": { "personagem": "Pato de Topete", "pontos": 2, "cenaRejeicao": 9 } },
+        { "texto": "Votar no Pato de Óculos", "proximaCena": 10, "requisitoRelacionamento": { "personagem": "Pato de Óculos", "pontos": 2, "cenaRejeicao": 11 } },
+        {
+          "texto": "Correr para o banheiro!",
+          "ramificacoes": [
+            { "tipo": "relacionamento", "personagem": "Pato de Topete", "pontos": 2, "proximaCena": 13 }
+          ],
+          "proximaCenaPadrao": 12
+        }
+      ]
+    },
+    { "id": 8, "cenario": "Final Feliz", "personagem": "Pato de Topete", "personagemSecundario": null, "dialogo": "Eu sabia! A verdadeira elegância sempre vence! Obrigado pelo seu voto de confiança!", "fimDeJogo": true },
+    { "id": 13, "cenario": "Corredor", "personagem": "Narrador", "personagemSecundario": null, "dialogo": "Você começa a correr, mas o Pato de Topete, com quem você tem uma boa relação, te segura pelo braço e diz: 'Calma, amigo. Não precisa fugir.' A situação se acalma.", "escolhas": [{ "texto": "Ver o que acontece depois...", "proximaCena": 14 }] },
+    {
+      "id": 14,
+      "cenario": "Sala de Aula",
+      "personagem": "Pato de Topete",
+      "personagemSecundario": "Pato de Óculos",
+      "dialogo": "Ufa, que bom que você ficou. Eu só queria dizer que, independentemente da sua escolha, minha amizade com este pato de óculos é o que importa.",
+      "escolhas": [{ "texto": "...", "proximaCena": 15 }]
+    },
+    {
+      "id": 15,
+      "cenario": "Sala de Aula",
+      "personagem": "Pato de Óculos",
+      "personagemSecundario": "Pato de Topete",
+      "dialogo": "Ele tem razão. Fomos tolos em competir assim. O importante é que estamos juntos nessa. Obrigado por nos ajudar a ver isso, protagonista.",
+      "fimDeJogo": true
+    }
+  ]
+}

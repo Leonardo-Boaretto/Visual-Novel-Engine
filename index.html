@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Novel Engine</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div id="container-jogo">
+        <div id="tela-inicial">
+            <h1 id="titulo-campanha"></h1>
+            <button id="botao-iniciar">Iniciar</button>
+            <button id="botao-carregar-menu" class="botao-menu">Carregar Jogo</button>
+        </div>
+
+        <div id="palco-personagens">
+            <div id="personagem-esquerda" class="slot-personagem">
+                <img id="imagem-personagem-esquerda" src="" alt="">
+            </div>
+            <div id="personagem-direita" class="slot-personagem">
+                <img id="imagem-personagem-direita" src="" alt="">
+            </div>
+        </div>
+
+        <div id="interface-jogo" style="display: none;">
+            <div id="controles-superiores">
+                <button id="botao-salvar">Salvar</button>
+                <button id="botao-carregar">Carregar</button>
+                <button id="botao-historico">Histórico</button>
+                <button id="botao-inventario">🎒</button>
+                <button id="botao-relacionamento">❤️</button>
+            </div>
+            <div id="caixa-dialogo">
+                <div id="nome-personagem"></div>
+                <div id="texto-dialogo"></div>
+                <div id="container-escolhas"></div>
+            </div>
+        </div>
+
+        <div id="modal-inventario" class="modal">
+            <h3>Inventário</h3>
+            <ul id="lista-itens-inventario"></ul>
+        </div>
+        <div id="modal-relacionamento" class="modal">
+            <h3>Relações</h3>
+            <ul id="lista-relacionamento"></ul>
+        </div>
+        <div id="modal-historico" class="modal">
+            <h3>Histórico de Diálogo</h3>
+            <div id="log-dialogo"></div>
+        </div>
+    </div>
+
+    <audio id="musica-fundo" loop></audio>
+    <script src="roteiro.js"></script>
+</body>
+</html>
