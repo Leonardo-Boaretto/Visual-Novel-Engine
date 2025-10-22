@@ -48,9 +48,9 @@
       "personagemSecundario": "Pato de Óculos",
       "dialogo": "Hmm... ok. Mas vamos para a próxima questão, e essa é crucial. Quem é mais maneiro?",
       "escolhas": [
-        { "texto": "O Pato de Topete, com certeza.", "proximaCena": 5, "ganhoRelacionamento": { "Pato de Topete": 1 } },
-        { "texto": "O Pato de Óculos, sem dúvida.", "proximaCena": 5, "ganhoRelacionamento": { "Pato de Óculos": 1 } },
-        { "texto": "Gente, por favor...", "proximaCena": 4 }
+        { "texto": "O Pato de Topete, com certeza.", "proximaCena": 7, "ganhoRelacionamento": { "Pato de Topete": 1 } },
+        { "texto": "O Pato de Óculos, sem dúvida.", "proximaCena": 7, "ganhoRelacionamento": { "Pato de Óculos": 1 } },
+        { "texto": "Gente, por favor...", "proximaCena": 7 }
       ]
     },
     {

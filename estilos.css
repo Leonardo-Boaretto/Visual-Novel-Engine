@@ -107,6 +107,12 @@ body {
     opacity: 0.6;
 }
 
+/* NOVO: Classe para ocultar completamente slots vazios */
+.slot-personagem img.oculto {
+    opacity: 0;
+    pointer-events: none;
+}
+
 
 /* --- Interface do Jogo --- */
 #caixa-dialogo {
@@ -122,7 +128,8 @@ body {
     box-shadow: 0 0 20px rgba(0,0,0,0.8);
     display: flex;
     flex-direction: column;
-    height: 230px;
+    max-height: 45vh; /* Altura máxima baseada na viewport */
+    height: auto; /* Permite altura variável */
 }
 
 #nome-personagem {
@@ -138,6 +145,9 @@ body {
     flex-grow: 1;
     font-size: 1.2em;
     line-height: 1.6;
+    max-height: 120px; /* Altura máxima para o texto */
+    overflow-y: auto; /* Scroll se o texto for muito longo */
+    padding-right: 5px; /* Espaço para scrollbar */
 }
 
 #container-escolhas {
@@ -145,6 +155,10 @@ body {
     flex-direction: column;
     gap: 10px;
     margin-top: 15px;
+    max-height: 200px; /* Altura máxima para as opções */
+    overflow-y: auto; /* Adiciona scroll quando necessário */
+    padding-right: 5px; /* Espaço para a barra de scroll */
+    flex-shrink: 1; /* Permite que o container encolha */
 }
 
 .botao-escolha {
@@ -253,9 +267,80 @@ body {
     margin-left: 5px;
 }
 
-/* Classe que vai esconder a caixa de diálogo */
-#caixa-dialogo.escondido {
-    transform: translateY(150%); /* Move a caixa para baixo, para fora da tela */
-    opacity: 0;
-    pointer-events: none; /* Impede cliques em botões invisíveis */
+/* Estilos personalizados para scrollbar das opções */
+#container-escolhas::-webkit-scrollbar {
+    width: 8px;
+}
+
+#container-escolhas::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+#container-escolhas::-webkit-scrollbar-thumb {
+    background: var(--cor-primaria);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#container-escolhas::-webkit-scrollbar-thumb:hover {
+    background: var(--cor-primaria-hover);
+}
+
+/* Estilos personalizados para scrollbar do texto do diálogo */
+#texto-dialogo::-webkit-scrollbar {
+    width: 6px;
+}
+
+#texto-dialogo::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+#texto-dialogo::-webkit-scrollbar-thumb {
+    background: rgba(76, 175, 80, 0.5);
+    border-radius: 3px;
+}
+
+/* Responsividade para dispositivos menores */
+@media (max-height: 600px) {
+    #caixa-dialogo {
+        max-height: 50vh; /* Aumenta altura máxima em telas menores */
+        bottom: 1%;
+        padding: 15px;
+    }
+
+    #container-escolhas {
+        max-height: 150px; /* Reduz altura das opções em telas menores */
+    }
+
+    #texto-dialogo {
+        max-height: 80px; /* Reduz altura do texto em telas menores */
+        font-size: 1.1em;
+    }
+
+    #nome-personagem {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    #caixa-dialogo {
+        left: 2%;
+        right: 2%;
+        padding: 15px;
+    }
+
+    .slot-personagem {
+        width: 40%; /* Reduz largura dos personagens em telas menores */
+    }
+
+    #container-escolhas {
+        max-height: 180px;
+    }
+
+    #texto-dialogo {
+        max-height: 100px;
+    }
 }

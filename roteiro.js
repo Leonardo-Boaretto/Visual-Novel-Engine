@@ -49,6 +49,8 @@ let historicoDialogo = [];
 let personagensConhecidos = []; 
 let digitando = false;
 let intervaloDigitacao;
+let musicaAtualTocando = ''; // Rastreia qual música está tocando atualmente
+let musicaAnterior = ''; // Rastreia a última música de fundo real (não efeito sonoro)
 
 // --- Inicialização do Jogo ---
 fetch('historia.json')
@@ -74,6 +76,7 @@ botaoCarregarMenu.addEventListener('click', carregarJogo);
 function iniciarJogo() {
     telaInicial.style.display = 'none';
     interfaceJogo.style.display = 'block';
+    // Inicializa com a primeira cena
     exibirCena(1);
 }
 
@@ -95,23 +98,56 @@ function exibirCena(id) {
     }
 
     // NOVO: Lógica para buscar e aplicar o cenário
-    const infoCenario = dadosHistoria.cenarios.find(c => c.nome === cena.cenario);
+    const infoCenario = dadosHistoria.cenarios.find(c => c.id === cena.cenario);
     if (infoCenario) {
         containerJogo.style.backgroundImage = `url(${infoCenario.imagem})`;
+    } else {
+        console.error(`Cenário não encontrado: ${cena.cenario}`);
     }
 
-    if (cena.musicaFundo && musicaFundo.src !== cena.musicaFundo) {
-        musicaFundo.src = cena.musicaFundo;
-        musicaFundo.play();
+    // Verifica se a música precisa ser trocada (usando variável de rastreamento)
+    if (cena.musicaFundo && musicaAtualTocando !== cena.musicaFundo) {
+        musicaAtualTocando = cena.musicaFundo;
+
+        // Verifica se é um efeito sonoro (começa com 'som_')
+        const isEfeitoSonoro = cena.musicaFundo.includes('som_');
+
+        if (isEfeitoSonoro) {
+            // Para efeitos sonoros: remove loop e toca uma vez
+            musicaFundo.loop = false;
+            musicaFundo.src = cena.musicaFundo;
+            musicaFundo.play();
+
+            // Quando o efeito terminar, volta para a música anterior
+            musicaFundo.onended = () => {
+                if (musicaAnterior && musicaAnterior !== cena.musicaFundo) {
+                    musicaAtualTocando = musicaAnterior;
+                    musicaFundo.src = musicaAnterior;
+                    musicaFundo.loop = true;
+                    musicaFundo.play();
+                    musicaFundo.onended = null; // Remove o event listener
+                }
+            };
+        } else {
+            // Para músicas de fundo: mantém loop e salva como anterior
+            musicaAnterior = cena.musicaFundo;
+            musicaFundo.loop = true;
+            musicaFundo.src = cena.musicaFundo;
+            musicaFundo.play();
+            musicaFundo.onended = null; // Remove qualquer event listener anterior
+        }
     }
+
+    // NOVO: Tocar efeitos sonoros (SFX) se definidos na cena
+    tocarEfeitoSonoro(cena.somEfeito);
     
     // NOVO: Lógica para gerenciar personagem principal e secundário
-    const infoPrincipal = dadosHistoria.personagens.find(p => p.nome === cena.personagem);
-    const infoSecundario = dadosHistoria.personagens.find(p => p.nome === cena.personagemSecundario);
+    const infoPrincipal = cena.personagem === 'Narrador' ? null : dadosHistoria.personagens.find(p => p.nome === cena.personagem);
+    const infoSecundario = cena.personagemSecundario ? dadosHistoria.personagens.find(p => p.nome === cena.personagemSecundario) : null;
 
     // Personagem Principal (Esquerda)
     atualizarSlotPersonagem(imagemPersonagemEsquerda, infoPrincipal, false);
-    
+
     // Personagem Secundário (Direita)
     atualizarSlotPersonagem(imagemPersonagemDireita, infoSecundario, true);
 
@@ -120,6 +156,11 @@ function exibirCena(id) {
     exibirDialogoAnimado(cena.dialogo, () => {
         exibirEscolhas(cena.escolhas || []);
         if (cena.fimDeJogo) {
+            // Limpa inventário se for uma cena de morte
+            if (cena.dialogo.includes('MORTE') || cena.dialogo.includes('morre') || cena.dialogo.includes('morto')) {
+                limparInventario();
+            }
+
             const botaoReiniciar = document.createElement('button');
             botaoReiniciar.textContent = 'Jogar Novamente';
             botaoReiniciar.className = 'botao-escolha';
@@ -142,14 +183,14 @@ function exibirCena(id) {
 
 // NOVO: Função auxiliar para atualizar um slot de personagem
 function atualizarSlotPersonagem(elementoImg, infoPersonagem, isSecundario) {
-    elementoImg.classList.remove('visivel', 'inativo');
-    
+    elementoImg.classList.remove('visivel', 'inativo', 'oculto');
+
     if (infoPersonagem && infoPersonagem.imagem) {
         // Evita recarregar a mesma imagem
         if (elementoImg.src !== infoPersonagem.imagem) {
             elementoImg.src = infoPersonagem.imagem;
         }
-        
+
         setTimeout(() => {
             elementoImg.classList.add('visivel');
             if (isSecundario) {
@@ -158,6 +199,7 @@ function atualizarSlotPersonagem(elementoImg, infoPersonagem, isSecundario) {
         }, 50);
     } else {
         elementoImg.src = ''; // Limpa o slot se não houver personagem
+        elementoImg.classList.add('oculto'); // Oculta completamente o slot vazio
     }
 }
 
@@ -169,6 +211,7 @@ function atualizarSlotPersonagem(elementoImg, infoPersonagem, isSecundario) {
 // Função de exibir escolhas com lógica de ramificação
 function exibirEscolhas(escolhas) {
     containerEscolhas.innerHTML = '';
+    containerEscolhas.scrollTop = 0; // Garante que o scroll comece no topo
     escolhas.forEach(escolha => {
         const botao = document.createElement('button');
         botao.className = 'botao-escolha';
@@ -217,7 +260,16 @@ function processarGanhos(escolha) {
             }
         });
     }
-    // Adicionar lógica para ganho de itens aqui se necessário
+
+    // NOVO: Processar ganhos de itens
+    if (escolha.ganhoItem) {
+        const itemExistente = inventario.find(item => item.nome === escolha.ganhoItem);
+        if (!itemExistente) {
+            inventario.push({ nome: escolha.ganhoItem });
+            console.log(`Item adicionado ao inventário: ${escolha.ganhoItem}`);
+            atualizarInterfaceInfo(); // Atualiza a interface para mostrar o novo item
+        }
+    }
 }
 
 // Função para verificar condições de uma ramificação
@@ -239,12 +291,14 @@ function exibirDialogoAnimado(texto, callback) {
     if (digitando) {
         clearTimeout(intervaloDigitacao);
         textoDialogo.innerHTML = texto;
+        textoDialogo.scrollTop = 0; // Garante que o scroll comece no topo
         digitando = false;
         if(callback) callback();
         return;
     }
 
     textoDialogo.innerHTML = '';
+    textoDialogo.scrollTop = 0; // Garante que o scroll comece no topo
     containerEscolhas.innerHTML = '';
     let i = 0;
     digitando = true;
@@ -264,6 +318,7 @@ function exibirDialogoAnimado(texto, callback) {
         if (digitando) {
             clearInterval(intervaloDigitacao);
             textoDialogo.innerHTML = texto;
+            textoDialogo.scrollTop = 0; // Garante que o scroll comece no topo
             digitando = false;
             if (callback) callback();
             caixaDialogo.onclick = null; // Remove o evento após o uso
@@ -302,7 +357,24 @@ function fecharTodosModais() {
     [modalInventario, modalRelacionamento, modalHistorico].forEach(m => m.style.display = 'none');
 }
 
-// --- Sistema de Histórico ---
+// --- Funções de Efeitos Sonoros (SFX) ---
+// Função para tocar efeitos sonoros que não interrompem a música de fundo
+function tocarEfeitoSonoro(arquivoSFX) {
+    if (arquivoSFX) {
+        const audioSFX = new Audio(arquivoSFX);
+        audioSFX.volume = 0.7; // Volume um pouco mais baixo que a música de fundo
+        audioSFX.play().catch(error => {
+            console.log('Erro ao tocar efeito sonoro:', error);
+        });
+    }
+}
+
+// NOVO: Função para limpar inventário (usada em mortes)
+function limparInventario() {
+    inventario = [];
+    atualizarInterfaceInfo();
+    console.log('Inventário limpo devido à morte do jogador');
+}
 function adicionarAoHistorico(personagem, dialogo) {
     historicoDialogo.push({ personagem, dialogo });
 }
@@ -320,7 +392,9 @@ function salvarJogo() {
         inventario: inventario,
         relacionamentos: relacionamentos,
         historicoDialogo: historicoDialogo,
-        personagensConhecidos: personagensConhecidos // Salva a lista de conhecidos
+        personagensConhecidos: personagensConhecidos, // Salva a lista de conhecidos
+        musicaAtualTocando: musicaAtualTocando, // Salva a música atual
+        musicaAnterior: musicaAnterior // Salva a música anterior
     };
     localStorage.setItem('saveVisualNovel', JSON.stringify(estadoJogo));
     alert('Jogo salvo com sucesso!');
@@ -336,6 +410,8 @@ function carregarJogo() {
         relacionamentos = dadosJogo.relacionamentos;
         historicoDialogo = dadosJogo.historicoDialogo;
         personagensConhecidos = dadosJogo.personagensConhecidos; // Carrega a lista de conhecidos
+        musicaAtualTocando = dadosJogo.musicaAtualTocando || ''; // Carrega a música atual
+        musicaAnterior = dadosJogo.musicaAnterior || ''; // Carrega a música anterior
 
         telaInicial.style.display = 'none';
         interfaceJogo.style.display = 'block';
